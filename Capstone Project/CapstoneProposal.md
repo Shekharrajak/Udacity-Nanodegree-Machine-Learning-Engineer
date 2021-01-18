@@ -103,11 +103,9 @@ Steps:
 
 There is lots of solution for this problem in kaggle dashboard: https://www.kaggle.com/c/tweet-sentiment-extraction/leaderboard
 
-I want to compare the existing BERT solutions with the above idea of ALBERT. The accuracy must be better than 70%.
-
-
-### Evaluation Metrics
-
+I want to compare the existing BERT solutions with the above idea of ALBERT. 
+The accuracy (in terms of similarity using jaccard score) must be better than 70%, as we can see in leader board some of them using 
+BERT in different ways and coming close to 0.7 score. So this variant should word in similar way but using specifically ALBERT.
 
 I want to mainly compare (or work on top of ) these 2 concepts :
 
@@ -115,10 +113,39 @@ I want to mainly compare (or work on top of ) these 2 concepts :
 * [roberta inference 5 folds](https://www.kaggle.com/abhishek/roberta-inference-5-folds)
 
 
-I am trying to get better and optimized solution suing ALBERT model which is optimized version of the BERT.
+I am trying to get better and optimized solution using ALBERT model which is optimized version of the BERT.
 Using huggingface library ALBERT model, we can try out different way of checking similarity between tokens/words and map 
 the sentiments to words that is present in context.
 
+
+
+### Evaluation Metrics
+
+
+The metric in this competition is the word-level Jaccard score. A good description of Jaccard similarity for strings is here.
+
+A Python implementation based on the links above, and matched with the output of the C# implementation on the back end, is provided below.
+
+```
+def jaccard(str1, str2): 
+    a = set(str1.lower().split()) 
+    b = set(str2.lower().split())
+    c = a.intersection(b)
+    return float(len(c)) / (len(a) + len(b) - len(c))
+```
+
+The formula for the overall metric, then, is:
+score=1n∑i=1njaccard(gti,dti)
+
+where:
+
+* n=number of documents
+
+* jaccard=the function provided above
+
+* gti=the ith ground truth
+
+* dti=the ith prediction
 
 
 ### Project Design
