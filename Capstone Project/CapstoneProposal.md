@@ -1,45 +1,165 @@
 # Machine Learning Engineer Nanodegree
 ## Capstone Proposal
-Joe Udacity  
-December 31st, 2050
+Shekhar Prasad Rajak
+Jan 18, 2021
 
 ## Proposal
-_(approx. 2-3 pages)_
+
+Kaggle Problem: [Tweet sentiment extraction](https://www.kaggle.com/c/tweet-sentiment-extraction/overview)
+
+"My ridiculous dog is amazing." [sentiment: positive]
+
+With all of the tweets circulating every second it is hard to tell whether the sentiment behind a specific tweet will impact a company, or a person's, brand for being viral (positive), or devastate profit because it strikes a negative tone. Capturing sentiment in language is important in these times where decisions and reactions are created and updated in seconds. But, which words actually lead to the sentiment description? In this competition you will need to pick out the part of the tweet (word or phrase) that reflects the sentiment.
+
+Help build your skills in this important area with this broad dataset of tweets. Work on your technique to grab a top spot in this competition. What words in tweets support a positive, negative, or neutral sentiment? How can you help make that determination using machine learning tools?
+
+In this competition we've extracted support phrases from Figure Eight's Data for Everyone platform. The dataset is titled Sentiment Analysis: Emotion in Text tweets with existing sentiment labels, used here under creative commons attribution 4.0. international licence. Your objective in this competition is to construct a model that can do the same - look at the labeled sentiment for a given tweet and figure out what word or phrase best supports it.
+
 
 ### Domain Background
-_(approx. 1-2 paragraphs)_
 
-In this section, provide brief details on the background information of the domain from which the project is proposed. Historical information relevant to the project should be included. It should be clear how or why a problem in the domain can or should be solved. Related academic research should be appropriately cited in this section, including why that research is relevant. Additionally, a discussion of your personal motivation for investigating a particular problem in the domain is encouraged but not required.
+There is classical sentimental anslysis problem, where we have to check if the context have positive, negative or neutral sentiment.
+With this problem, we are trying to find the consecutive words that makes the whole context positive/negative or neutral. 
+
+[BERT](https://arxiv.org/abs/1810.04805) and it's variants like [RoBERTa](https://arxiv.org/abs/1907.11692) and [ALBERT](https://arxiv.org/abs/1909.11942) are helping in most of the common NLP problems and one of them is Question/Answering.
+
+BERT is language representation model, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications.
+
+Using BERT we can try to extract the phrase from the context that tends to particular sentiment.
 
 ### Problem Statement
-_(approx. 1 paragraph)_
 
-In this section, clearly describe the problem that is to be solved. The problem described should be well defined and should have at least one relevant potential solution. Additionally, describe the problem thoroughly such that it is clear that the problem is quantifiable (the problem can be expressed in mathematical or logical terms) , measurable (the problem can be measured by some metric and clearly observed), and replicable (the problem can be reproduced and occurs more than once).
+In dataset, we have :
+
+    textID - unique ID for each piece of text
+    text - the text of the tweet
+    sentiment - the general sentiment of the tweet
+  
+and the model will find the selected_text - the text that supports the tweet's sentiment.
+
+More details: [Tweet sentiment extraction](https://www.kaggle.com/c/tweet-sentiment-extraction/overview)
+
 
 ### Datasets and Inputs
-_(approx. 2-3 paragraphs)_
 
-In this section, the dataset(s) and/or input(s) being considered for the project should be thoroughly described, such as how they relate to the problem and why they should be used. Information such as how the dataset or input is (was) obtained, and the characteristics of the dataset or input, should be included with relevant references and citations as necessary It should be clear how the dataset(s) or input(s) will be used in the project and whether their use is appropriate given the context of the problem.
+From the kaggle data:
+
+###### Files we have: 
+
+train.csv, test.csv, and sample_submission.csv.
+
+###### What should we expect the data format to be?
+
+Each row contains the text of a tweet and a sentiment label. In the training set you are provided with a word or phrase drawn from the tweet (selected_text) that encapsulates the provided sentiment.
+
+Make sure, when parsing the CSV, to remove the beginning / ending quotes from the text field, to ensure that you don't include them in your training.
+What am I predicting?
+
+You're attempting to predict the word or phrase from the tweet that exemplifies the provided sentiment. The word or phrase should include all characters within that span (i.e. including commas, spaces, etc.). The format is as follows:
+
+`<id>,"<word or phrase that supports the sentiment>"`
+
+For example:
+
+```
+2,"very good"
+5,"I am neutral about this"
+6,"bad"
+8,"if you say so!"
+etc.
+```
+
+###### Files
+
+    train.csv - the training set
+    test.csv - the test set
+    sample_submission.csv - a sample submission file in the correct format
+
+###### Columns
+
+    textID - unique ID for each piece of text
+    text - the text of the tweet
+    sentiment - the general sentiment of the tweet
+    selected_text - [train only] the text that supports the tweet's sentiment
+
+
+
 
 ### Solution Statement
-_(approx. 1 paragraph)_
 
-In this section, clearly describe a solution to the problem. The solution should be applicable to the project domain and appropriate for the dataset(s) or input(s) given. Additionally, describe the solution thoroughly such that it is clear that the solution is quantifiable (the solution can be expressed in mathematical or logical terms) , measurable (the solution can be measured by some metric and clearly observed), and replicable (the solution can be reproduced and occurs more than once).
+Steps:
+
+* Cleanup the training data 
+* Prepare the tokenizer (planning to use ALBERT tokenizer from transformer library of huggingface)
+* Get the encoding and customize the ALBERT model of the transformer for this problem statement.
+* Overiride the forward pass, evaludation steps
+* Hypertuning the model parameter and optimizer
+* Check in each epochs the loss function value
+* Get the performance for the train and test data using  word-level Jaccard score.
+
 
 ### Benchmark Model
-_(approximately 1-2 paragraphs)_
 
-In this section, provide the details for a benchmark model or result that relates to the domain, problem statement, and intended solution. Ideally, the benchmark model or result contextualizes existing methods or known information in the domain and problem given, which could then be objectively compared to the solution. Describe how the benchmark model or result is measurable (can be measured by some metric and clearly observed) with thorough detail.
+
+There is lots of solution for this problem in kaggle dashboard: https://www.kaggle.com/c/tweet-sentiment-extraction/leaderboard
+
+I want to compare the existing BERT solutions with the above idea of ALBERT. The accuracy must be better than 70%.
+
 
 ### Evaluation Metrics
-_(approx. 1-2 paragraphs)_
 
-In this section, propose at least one evaluation metric that can be used to quantify the performance of both the benchmark model and the solution model. The evaluation metric(s) you propose should be appropriate given the context of the data, the problem statement, and the intended solution. Describe how the evaluation metric(s) are derived and provide an example of their mathematical representations (if applicable). Complex evaluation metrics should be clearly defined and quantifiable (can be expressed in mathematical or logical terms).
+
+I want to mainly compare (or work on top of ) these 2 concepts :
+
+* [Twitter sentiment Extaction-Analysis,EDA and Model](https://www.kaggle.com/tanulsingh077/twitter-sentiment-extaction-analysis-eda-and-model)
+* [roberta inference 5 folds](https://www.kaggle.com/abhishek/roberta-inference-5-folds)
+
+
+I am trying to get better and optimized solution suing ALBERT model which is optimized version of the BERT.
+Using huggingface library ALBERT model, we can try out different way of checking similarity between tokens/words and map 
+the sentiments to words that is present in context.
+
+
 
 ### Project Design
-_(approx. 1 page)_
 
-In this final section, summarize a theoretical workflow for approaching a solution given the problem. Provide thorough discussion for what strategies you may consider employing, what analysis of the data might be required before being used, or which algorithms will be considered for your implementation. The workflow and discussion that you provide should align with the qualities of the previous sections. Additionally, you are encouraged to include small visualizations, pseudocode, or diagrams to aid in describing the project design, but it is not required. The discussion should clearly outline your intended workflow of the capstone project.
+Once we cleanup the Text data and tokenize it using the appropriate tokenizer, we will use it as the training dataset.
+
+* For cleaning up and understanding the data we will be having mutliple methods for exploratory data analysis and graphs.
+
+* We will check the starting and ending index for the selected text in the original tweet text and store it in training dataset.
+
+* Tokenize the data, masking and transformer concepts to be applied in the origina tweet data in training dataset.
+
+`class TweetDataset(torch.utils.data.Dataset)` will be having the tokenized data.
+
+` class TweetAlbertModel(transformers.AlbertPreTrainedModel):)` will be customized evaluation, forward pass and init methods.
+
+
+Here is the skeleton for training step:
+
+
+```
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+
+optim = AdamW(model.parameters(), lr=5e-5)
+
+for epoch in range(3):
+    for batch in train_loader:
+        optim.zero_grad()
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
+        start_positions = batch['start_positions'].to(device)
+        end_positions = batch['end_positions'].to(device)
+        outputs = model(input_ids, attention_mask=attention_mask, start_positions=start_positions, end_positions=end_positions)
+        loss = outputs[0]
+        print(loss)
+        loss.backward()
+        optim.step()
+```
+
+Once loss fucntion is pretty stable and we are getting occuracy, we will compare with leaderboard solutions and notebooks in kaggle.
+
 
 -----------
 
